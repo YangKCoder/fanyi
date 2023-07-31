@@ -1,47 +1,49 @@
 package internal
 
 import (
-	"errors"
+	"fanyi/fanyi/factory"
+	"fanyi/internal/utils"
+	"fanyi/internal/utils/authv3"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
 	"github.com/bitly/go-simplejson"
 )
 
-const youdaoUrl = "https://fanyi.youdao.com/openapi.do?keyfrom=node-fanyi&key=110811608&type=data&doctype=json&version=1.1&q=${word}"
+const youdaoUrl = "https://openapi.youdao.com/api"
 
-type YouDao struct {
-	Key         string   `xml:"key"`
-	Ps          []string `xml:"ps"`
-	Pron        []string `xml:"pron"`
-	Pos         []string `xml:"pos"`
-	Acceptation []string `xml:"acceptation"`
-	Sent        []struct {
-		Orig  string `xml:"orig"`
-		Trans string `xml:"trans"`
-	} `xml:"sent"`
-}
+var appKey = os.Getenv("YOUDAO_APPKEY")
+var appSecret = os.Getenv("YOUDAO_APPSECRET")
+
+type YouDao struct{}
 
 func init() {
-	//Deprecated
-	//factory.Register("youdao", &YouDao{})
+	if appKey == "" || appSecret == "" {
+		return
+	}
+	factory.Register("youdao", &YouDao{})
 }
 
 func (y *YouDao) Translate(queryString string) ([]byte, error) {
-	url := strings.Replace(youdaoUrl, "${word}", queryString, 1)
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, errors.New("有道翻译接口问题")
+
+	// 添加请求参数
+	paramsMap := map[string][]string{
+		"q":    {queryString},
+		"from": {"auto"},
+		"to":   {"en"},
 	}
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
+	header := map[string][]string{
+		"Content-Type": {"application/x-www-form-urlencoded"},
 	}
-	return data, nil
+	// 添加鉴权相关参数
+	authv3.AddAuthParams(appKey, appSecret, paramsMap)
+	// 请求api服务
+	result := utils.DoPost(youdaoUrl, header, paramsMap, "application/json")
+
+	return result, nil
 }
 
 func (y *YouDao) Print(data []byte) {
