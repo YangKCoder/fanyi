@@ -1,8 +1,8 @@
 #!/bin/bash
 
-DOWNLAOD_URL="https://github.com/sakz/fanyi/releases/download"
+DOWNLAOD_URL="https://github.com/hellodeveye/fanyi/releases/download"
 
-VERSION_CHECK="https://api.github.com/repos/sakz/fanyi/releases/latest"
+VERSION_CHECK="https://api.github.com/repos/hellodeveye/fanyi/releases/latest"
 
 UPDATE=0
 
@@ -35,7 +35,7 @@ install(){
     fi
     LASTEST_VERSION=$(curl -H 'Cache-Control: no-cache' -s "$VERSION_CHECK" | grep 'tag_name' | cut -d\" -f4)
     echo "正在下载程序`colorEcho $BLUE $LASTEST_VERSION`版本..."
-#   https://github.com/sakz/fanyi/releases/download/v0.0.4/fanyi_0.0.4_Linux_x86_64.tar.gz
+#   https://github.com/hellodeveye/fanyi/releases/download/v0.0.4/fanyi_0.0.4_Linux_x86_64.tar.gz
     cd /usr/local/bin/
     echo "$DOWNLAOD_URL/$LASTEST_VERSION/fanyi_${LASTEST_VERSION#*v}_Linux_x86_64.tar.gz"
     curl -LO "$DOWNLAOD_URL/$LASTEST_VERSION/fanyi_${LASTEST_VERSION#*v}_Linux_x86_64.tar.gz"
