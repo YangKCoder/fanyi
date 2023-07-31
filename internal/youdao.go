@@ -2,14 +2,14 @@ package internal
 
 import (
 	"errors"
-	"fanyi/fanyi/factory"
 	"fmt"
-	"github.com/bitly/go-simplejson"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/bitly/go-simplejson"
 )
 
 const youdaoUrl = "https://fanyi.youdao.com/openapi.do?keyfrom=node-fanyi&key=110811608&type=data&doctype=json&version=1.1&q=${word}"
@@ -27,7 +27,8 @@ type YouDao struct {
 }
 
 func init() {
-	factory.Register("youdao", &YouDao{})
+	//Deprecated
+	//factory.Register("youdao", &YouDao{})
 }
 
 func (y *YouDao) Translate(queryString string) ([]byte, error) {
